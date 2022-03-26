@@ -4,10 +4,14 @@ pooling multi machine
 ## commande master
 
 ```
+CAT         affiche le contenu de pool.py
 CLEAR       clear screen
+CPU         get cpu count of all workers
 EXIT        quitte le programme
+FM          affiche l'historique des messages
 GO          lance le travail
 HELP        affiche cette aide
+INIT        reinitialise le programme
 LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
