@@ -1,3 +1,4 @@
+from doctest import master
 import os
 from time import sleep, time
 
@@ -9,7 +10,19 @@ from mod.POOcom import ClientCom
 
 start = "!06!"
 
-messages = []
+cmd_help = """
+CLEAR       clear screen
+EXIT        quitte le programme
+GO          lance le travail
+HELP        affiche cette aide
+LW          affiche la liste des workers
+MM          affiche les messages du master
+PING/GET    recupère la liste des workers
+WM          affiche les messages des workers
+"""
+
+worker_messages = []
+master_messages = []
 worker = []
 
 f = Fernet(key.key) 
@@ -21,7 +34,11 @@ secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".e
 def recv_msg(msg):
     if msg.startswith(start):
         new = f.decrypt(msg[len(start):].encode()).decode()
-        messages.append([int(new.split("§")[0]), "§".join(new.split("§")[1:])])
+        code, msg = int(new.split("§")[0]), "§".join(new.split("§")[1:])
+        if code % 2 == 1:
+            worker_messages.append((code, msg))
+        else:
+            master_messages.append((code, msg))
 
 def go(inp):
     def push(start, end, step, quantite):
@@ -56,9 +73,9 @@ def ping(to_wait):
     d = time()
     while to_wait > (time() - d):
         sleep(0.05)
-        for m in messages:
+        for m in worker_messages:
             if m[0] == 101:
-                messages.remove(m)
+                worker_messages.remove(m)
                 worker.append(m[1])
                 print(f"{m[1]} is online {round((time() - d)*1000)}ms")
     print(f"ping DONE!, {len(worker)} workers online")
@@ -67,9 +84,9 @@ def wait_reply(exit_code):
     started = []
     while len(started) < exit_code:
         sleep(0.1)
-        for m in messages:
+        for m in worker_messages:
             if m[0] == 151:
-                messages.remove(m)
+                worker_messages.remove(m)
                 info = m[1].split("§")
                 print(f"{info[0]} starts work, {info[1]} elements in todo list :)")
                 started.append(info[0])
@@ -84,8 +101,14 @@ def shell():
             client.close()
             return
 
-        elif cmd in ["msg", "print"]:
-            print(messages)
+        elif cmd in ["help", "?"]:
+            print(cmd_help)
+
+        elif cmd in ["wm"]:
+            print(worker_messages)
+        
+        elif cmd in ["mm"]:
+            print(master_messages)
 
         elif cmd in ["ping", "get"]:
             ping(int(get_inp(inp, 1, 3)))
