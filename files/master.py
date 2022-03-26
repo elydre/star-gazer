@@ -18,6 +18,7 @@ HELP        affiche cette aide
 LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
+PRINT       affiche un message chez les workers
 WM          affiche les messages des workers
 """
 
@@ -28,6 +29,8 @@ worker = []
 f = Fernet(key.key) 
 client = ClientCom()
 
+find_diff = lambda l1, l2: [e for e in l1 if e not in l2]
+get_inp = lambda inp, id, default: default if len(inp) <= id else inp[id]
 secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
 
 @client.on_message
@@ -80,39 +83,40 @@ def ping(to_wait):
                 print(f"{m[1]} is online {round((time() - d)*1000)}ms")
     print(f"ping DONE!, {len(worker)} workers online")
 
-def wait_reply(exit_code):
+def wait_reply(attendu, code, string1, max_wait=10):
     w = []
-    while len(w) < exit_code:
+    s = []
+    debut = time()
+    while len(w) < attendu:
         sleep(0.1)
         for m in worker_messages:
-            if m[0] != 151:
+            if m[0] != code:
                 continue
             worker_messages.remove(m)
             info = m[1].split("§")
-            print(f"{info[0]} starts work, {info[1]} elements in todo list :)")
+            print(f"{info[0]} {string1}")
             w.append(info[0])
-    print("all workers started")
-
-    w, s = [], []
-    while len(w) < exit_code:
-        sleep(0.1)
-        for m in worker_messages:
-            if m[0] != 153:
-                continue
-            worker_messages.remove(m)
-            info = m[1].split("§")
-            print(f"{info[0]} finished work, s = {info[1]}")
             s.append(info[1])
-            w.append(info[0])
-    print("all workers finished")
+        if time() - debut > max_wait:
+            return s, w, round((time() - debut) * 1000)
+    return s, 0, round((time() - debut) * 1000)
+
+
+def go_reply(exit_code):
+    
+    s, x, t = wait_reply(exit_code, 151, "starts work")
+    if x == 0: print(f"all workers started in {t}ms")
+    else: print(f"no reply from {find_diff(worker, x)} in {t}ms")
+
+    s, x, t = wait_reply(exit_code, 153, "ends work")
+    if x == 0: print(f"all workers finished in {t}ms")
+    else: print(f"no reply from {find_diff(worker, x)} in {t}ms")
 
     print(cros.main(s))
 
 
 def shell():
     while True:
-        get_inp = lambda inp, id, default: default if len(inp) <= id else inp[id]
-
         inp = input("MASTER > ").split(" ")
         cmd = inp[0]
         if cmd in ["exit", "quit", "q"]:
@@ -146,7 +150,7 @@ def shell():
         elif cmd in ["go", "start", "run"]:
             exit_code = go(inp)
             if exit_code > 0:
-                wait_reply(exit_code)
+                go_reply(exit_code)
 
         elif cmd != "":
             print("commande inconnue")

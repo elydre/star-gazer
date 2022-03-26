@@ -11,6 +11,7 @@ HELP        affiche cette aide
 LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
+PRINT       affiche un message chez les workers
 WM          affiche les messages des workers
 ```
 
@@ -30,3 +31,10 @@ WM          affiche les messages des workers
 ```
 150§destination§start,end,step,quantite,n§fonctions
 ```
+
+## print
+
+| alias | description |
+| ----- | ----------- |
+| %     | \n          |
+| $     | worker name |
