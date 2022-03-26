@@ -3,8 +3,7 @@ from cryptography.fernet import Fernet
 import mod.key as key
 from mod.POOcom import ClientCom
 
-send_start = "!06!"
-recv_start = "!07!"
+start = "!06!"
 
 done = False
 
@@ -12,12 +11,12 @@ f = Fernet(key.key)
 
 client = ClientCom()
 
-secure_send = lambda msg: client.send(send_start + f.encrypt(msg.encode()).decode())
+secure_send = lambda msg: client.send(start + f.encrypt(msg.encode()).decode())
 
 @client.on_message
 def recv_msg(msg):
-    if msg.startswith(recv_start):
-        print(f.decrypt(msg[len(recv_start):].encode()).decode())
+    if msg.startswith(start):
+        print(f.decrypt(msg[len(start):].encode()).decode())
         global done
         done = True
 

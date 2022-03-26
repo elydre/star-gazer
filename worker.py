@@ -19,12 +19,11 @@ if __name__ == "__main__":
 
     client = ClientCom()
 
-    send_start = "!07!"
-    recv_start = "!06!"
+    start = "!06!"
 
     path_v = path.dirname(sys.argv[0])
 
-    secure_send = lambda msg: client.send(send_start + f.encrypt(msg.encode()).decode())
+    secure_send = lambda msg: client.send(start + f.encrypt(msg.encode()).decode())
 
 
 
@@ -58,8 +57,8 @@ if __name__ == "__main__":
 
     @client.on_message
     def recv_msg(msg):
-        if msg.startswith(recv_start):
-            go(f.decrypt(msg[len(recv_start):].encode()).decode())
+        if msg.startswith(start):
+            go(f.decrypt(msg[len(start):].encode()).decode())
 
     try:
         while True:
