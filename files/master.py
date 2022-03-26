@@ -18,8 +18,9 @@ path_v = os.path.dirname(sys.argv[0])
 secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
 
 def read_pool():
-    with open(f'{path_v}/master/code.py' if sys.platform == "win32" else "master/code.py", "w") as f:
-        return f.read()
+    with open(f'{path_v}/master/pool.py' if sys.platform == "win32" else "master/pool.py", "r") as fil:
+        code = fil.read()
+    return code
 
 @client.on_message
 def recv_msg(msg):
@@ -36,8 +37,10 @@ def shell():
         if cmd == "exit":
             client.close()
             return
+
         elif cmd == "msg":
             print(messages)
+
         elif cmd == "ping":
             secure_send(100, "ping")
             worker.clear()
@@ -50,11 +53,17 @@ def shell():
                         worker.append(m[1])
                         print(f"{m[1]} is online {round((time() - d)*1000)}ms")
             print(f"ping DONE!, {len(worker)} workers online")
+
         elif cmd == "lw":
             print(f"{len(worker)} workers in list")
             print("\n".join(worker))
+
         elif cmd == "clear":
             os.system("cls")
+
+        elif cmd == "go":
+            print(f"{read_pool()}")
+
         elif cmd != "":
             print("commande inconnue")
 

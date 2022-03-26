@@ -1,4 +1,4 @@
-# fonction poolée
+# fonction pool
 def do(n):
     if n == 2:
         return n
