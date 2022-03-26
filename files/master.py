@@ -1,3 +1,20 @@
+'''
+--|~|--|~|--|~|--|~|--|~|--|~|--
+
+██  ████        ██████        ██
+████    ██     ██           ████
+██      ██   ████████     ██  ██
+████████       ██       ██    ██
+██             ██       █████████
+██             ██             ██
+██
+ - codé en : UTF-8
+ - langage : python 3
+ - GitHub  : github.com/pf4-DEV
+ - Licence : GNU GPL v3
+--|~|--|~|--|~|--|~|--|~|--|~|--
+'''
+
 import os, sys
 from time import sleep, time
 
@@ -11,8 +28,11 @@ from mod.POOcom import ClientCom
 start = "!06!"
 
 cmd_help = """
+CAT         affiche le contenu de pool.py
 CLEAR       clear screen
+CPU         get cpu count of all workers
 EXIT        quitte le programme
+FM          affiche l'historique des messages
 GO          lance le travail
 HELP        affiche cette aide
 LW          affiche la liste des workers
@@ -25,6 +45,7 @@ WM          affiche les messages des workers
 
 worker_messages = []
 master_messages = []
+full_messages = []
 worker = []
 
 f = Fernet(key.key) 
@@ -33,16 +54,16 @@ client = ClientCom()
 find_diff = lambda l1, l2: [e for e in l1 if e not in l2]
 get_inp = lambda inp, id, default: default if len(inp) <= id else inp[id]
 secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
+msg_history = lambda msg: "\n".join([":".join([str(f) for f in e]) for e in msg])
 
 @client.on_message
 def recv_msg(msg):
     if msg.startswith(start):
         new = f.decrypt(msg[len(start):].encode()).decode()
         code, msg = int(new.split("§")[0]), "§".join(new.split("§")[1:])
-        if code % 2 == 1:
-            worker_messages.append((code, msg))
-        else:
-            master_messages.append((code, msg))
+        full_messages.append((code, msg))
+        if code % 2 == 1: worker_messages.append((code, msg))
+        else: master_messages.append((code, msg))
 
 def go(inp):
     def push(start, end, step, quantite):
@@ -97,11 +118,10 @@ def wait_reply(attendu, code, string1, max_wait=10):
             info = m[1].split("§")
             print(f"{info[0]} {string1}")
             w.append(info[0])
-            s.append(info[1])
+            s.append("§".join(info[1:]))
         if time() - debut > max_wait and max_wait != -1:
             return s, w, round((time() - debut) * 1000)
     return s, 0, round((time() - debut) * 1000)
-
 
 def go_reply(exit_code):
     
@@ -111,9 +131,21 @@ def go_reply(exit_code):
 
     s, x, t = wait_reply(exit_code, 153, "ends work", -1)
     print(f"all workers finished in {t}ms")
-        
 
     print(cros.main(s))
+
+def get_cpu_count():
+    for w in worker:
+        secure_send(102, w)
+    s, x, t = wait_reply(len(worker), 103, "reply")
+    if x == 0: print(f"all workers replied in {t}ms")
+    else: print(f"no reply from {find_diff(worker, x)} in {t}ms")
+    total_cpu = 0
+    for e in s:
+        temp = e.split("§")
+        print(f" {temp[0]} has {temp[1]} cores")
+        total_cpu += int(temp[1])
+    print(f"total cpu count : {total_cpu}")
 
 
 def shell():
@@ -129,11 +161,17 @@ def shell():
         elif cmd in ["help", "?"]:
             print(cmd_help)
 
+        elif cmd in ["cat"]:
+            print(util.read("fmaster/pool.py"))
+
+        elif cmd in ["fm"]:
+            print(msg_history(full_messages))
+
         elif cmd in ["wm"]:
-            print(worker_messages)
+            print(msg_history(worker_messages))
         
         elif cmd in ["mm"]:
-            print(master_messages)
+            print(msg_history(master_messages))
 
         elif cmd in ["ping", "get"]:
             ping(int(get_inp(inp, 1, 3)))
@@ -141,6 +179,9 @@ def shell():
         elif cmd in ["lw", "w"]:
             print(f"{len(worker)} workers in list")
             print(", ".join(worker))
+
+        elif cmd in ["cpu", "lscpu"]:
+            get_cpu_count()
 
         elif cmd in ["clear", "cls"]:
             os.system("cls")

@@ -1,3 +1,20 @@
+'''
+--|~|--|~|--|~|--|~|--|~|--|~|--
+
+██  ████        ██████        ██
+████    ██     ██           ████
+██      ██   ████████     ██  ██
+████████       ██       ██    ██
+██             ██       █████████
+██             ██             ██
+██
+ - codé en : UTF-8
+ - langage : python 3
+ - GitHub  : github.com/pf4-DEV
+ - Licence : GNU GPL v3
+--|~|--|~|--|~|--|~|--|~|--|~|--
+'''
+
 from multiprocessing import Pool
 from os import cpu_count
 from random import choice, randint
@@ -11,6 +28,7 @@ import mod.util as util
 from mod.POOcom import ClientCom
 from fworker.code import centre, do
 
+stop = False
 
 def code_centre(l):
     return centre(l)
@@ -34,6 +52,11 @@ if __name__ == "__main__":
             sleep(randint(1, 500)/1000)
             secure_send(101, personal_id)
             print("pong send")
+        elif code == 102:
+            if msg == personal_id:
+                sleep(randint(1, 500)/1000)
+                secure_send(103, f"{personal_id}§{personal_id}§{cpu_count()}")
+                print(f"cpu send, nb cpu : {cpu_count()}")
         elif code == 150:
             info = msg.split("§")
             if info[0] == personal_id:
@@ -47,6 +70,9 @@ if __name__ == "__main__":
         elif code == 154:
             print(msg.replace("%", "\n").replace("$", personal_id))
         elif code == 156:
+            print("STOP")
+            global stop
+            stop = True
             try: client.close()
             except: pass
             sys.exit(0)
@@ -79,7 +105,7 @@ if __name__ == "__main__":
 
     try:
         print(f"worker DONE - {personal_id}")
-        while True:
-            input()
+        while not stop:
+            sleep(1)
     except KeyboardInterrupt:
         client.close()

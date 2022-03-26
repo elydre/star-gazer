@@ -21,9 +21,11 @@ WM          affiche les messages des workers
 | code | description               |
 | ---- | ------------------------- |
 | 100  | ping                      |
-| 101  | reponse du worker au ping |
+| 101  | reponse au 100            |
+| 102  | get cpu count             |
+| 103  | reponse du 102            |
 | 150  | demande de travail        |
-| 151  | travail disponible        |
+| 151  | reponse au 150            |
 | 153  | reponse du travail        |
 | 154  | demande de print          |
 | 156  | arrete des workers        |
