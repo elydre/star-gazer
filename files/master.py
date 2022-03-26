@@ -1,9 +1,10 @@
-import os, sys
+import os
 from time import sleep, time
 
 from cryptography.fernet import Fernet
 
 import mod.key as key
+import mod.util as util
 from mod.POOcom import ClientCom
 
 start = "!06!"
@@ -14,13 +15,7 @@ worker = []
 f = Fernet(key.key) 
 client = ClientCom()
 
-path_v = os.path.dirname(sys.argv[0])
 secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
-
-def read_pool():
-    with open(f'{path_v}/master/pool.py' if sys.platform == "win32" else "master/pool.py", "r") as fil:
-        code = fil.read()
-    return code
 
 @client.on_message
 def recv_msg(msg):
@@ -62,7 +57,7 @@ def shell():
             os.system("cls")
 
         elif cmd == "go":
-            print(f"{read_pool()}")
+            print(util.read("master/pool.py"))
 
         elif cmd != "":
             print("commande inconnue")

@@ -1,4 +1,3 @@
-import sys
 from multiprocessing import Pool
 from os import cpu_count, path
 from random import choice, randint
@@ -7,6 +6,7 @@ from time import sleep
 from cryptography.fernet import Fernet
 
 import mod.key as key
+import mod.util as util
 from mod.POOcom import ClientCom
 from worker.code import centre, do
 
@@ -22,7 +22,6 @@ if __name__ == "__main__":
     f = Fernet(key.key) 
     client = ClientCom()
 
-    path_v = path.dirname(sys.argv[0])
     personal_id = choice(["elise", "ronan", "adele", "clara", "alain", "loris"]) + str(randint(1000, 9999))
     start = "!06!"
 
@@ -39,8 +38,7 @@ if __name__ == "__main__":
     def go(func):
         print(f"{func}")
 
-        with open(f'{path_v}/worker/code.py' if sys.platform == "win32" else "worker/code.py", "w") as f:
-            f.write(func.split("§")[0])
+        util.write("worker/code.py", func.split("§")[0])
         print("ecrire DONE!")
 
         todo = eval(func.split("§")[1])
