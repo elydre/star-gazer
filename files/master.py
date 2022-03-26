@@ -1,11 +1,11 @@
-from doctest import master
-import os
+import os, sys
 from time import sleep, time
 
 from cryptography.fernet import Fernet
 
 import mod.key as key
 import mod.util as util
+import mod.cros as cros
 from mod.POOcom import ClientCom
 
 start = "!06!"
@@ -42,7 +42,7 @@ def recv_msg(msg):
 
 def go(inp):
     def push(start, end, step, quantite):
-        pool = util.read("fmaster/pool.py")
+        pool = util.read("fmaster/pool.py").split("#END#")[0]
         for n in range(quantite):
             secure_send(150, f"{worker[n]}§{start},{end},{step},{quantite},{n}§{pool}")
             print(f"send to {worker[n]}")
@@ -81,15 +81,33 @@ def ping(to_wait):
     print(f"ping DONE!, {len(worker)} workers online")
 
 def wait_reply(exit_code):
-    started = []
-    while len(started) < exit_code:
+    w = []
+    while len(w) < exit_code:
         sleep(0.1)
         for m in worker_messages:
-            if m[0] == 151:
-                worker_messages.remove(m)
-                info = m[1].split("§")
-                print(f"{info[0]} starts work, {info[1]} elements in todo list :)")
-                started.append(info[0])
+            if m[0] != 151:
+                continue
+            worker_messages.remove(m)
+            info = m[1].split("§")
+            print(f"{info[0]} starts work, {info[1]} elements in todo list :)")
+            w.append(info[0])
+    print("all workers started")
+
+    w, s = [], []
+    while len(w) < exit_code:
+        sleep(0.1)
+        for m in worker_messages:
+            if m[0] != 153:
+                continue
+            worker_messages.remove(m)
+            info = m[1].split("§")
+            print(f"{info[0]} finished work, s = {info[1]}")
+            s.append(info[1])
+            w.append(info[0])
+    print("all workers finished")
+
+    print(cros.main(s))
+
 
 def shell():
     while True:
@@ -98,8 +116,10 @@ def shell():
         inp = input("MASTER > ").split(" ")
         cmd = inp[0]
         if cmd in ["exit", "quit", "q"]:
-            client.close()
-            return
+            try: client.close()
+            except: pass
+            sys.exit(0)
+
 
         elif cmd in ["help", "?"]:
             print(cmd_help)
@@ -120,6 +140,9 @@ def shell():
         elif cmd in ["clear", "cls"]:
             os.system("cls")
 
+        elif cmd in ["print"]:
+            secure_send(154, get_inp(inp, 1, "%master print"))
+
         elif cmd in ["go", "start", "run"]:
             exit_code = go(inp)
             if exit_code > 0:
@@ -128,8 +151,7 @@ def shell():
         elif cmd != "":
             print("commande inconnue")
 
-try:
-    while True:
-        shell()
-except KeyboardInterrupt:
-    client.close()
+
+while True:
+    try: shell()
+    except KeyboardInterrupt: print("ctrl+c")

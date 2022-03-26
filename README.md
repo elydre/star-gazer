@@ -23,6 +23,7 @@ WM          affiche les messages des workers
 | 150  | demande de travail        |
 | 151  | travail disponible        |
 | 153  | reponse du travail        |
+| 154  | demande de print          |
 
 ### 150
 

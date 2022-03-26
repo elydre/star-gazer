@@ -40,6 +40,11 @@ if __name__ == "__main__":
                 liste = util.generer_liste(*gn)
                 print(f"starts work, {len(liste)} elements in todo list")
                 secure_send(151, f"{personal_id}§{len(liste)}")
+                s = go(info[2], liste)
+                print(f"{personal_id} ends work, {s}")
+                secure_send(153, f"{personal_id}§{s}")
+        elif code == 154:
+            print(msg.replace("%", "\n"))
 
 
     def go(func, todo):
@@ -55,9 +60,8 @@ if __name__ == "__main__":
         with Pool(1) as p:
             s = (p.map(code_centre, [sortie])[0])
         print(f"centre DONE! - {s}")
-        
-        secure_send(str(s))
-        print("send DONE!")
+
+        return s        
 
     @client.on_message
     def recv_msg(msg):
