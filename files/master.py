@@ -191,8 +191,8 @@ def shell():
             get_cpu_count()
 
         elif cmd in ["clear", "cls"]:
-            os.system("cls")
-
+            os.system('cls' if os.name == 'nt' else 'clear')
+            
         elif cmd in ["print"]:
             secure_send(154, get_inp(inp, 1, "%master print"))
 
