@@ -206,7 +206,8 @@ def shell():
 
         elif cmd != "":
             print("commande inconnue")
-
+            
+print(util.entette)
 init()
 while True:
     try: shell()

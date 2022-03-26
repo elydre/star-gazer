@@ -44,6 +44,7 @@ if __name__ == "__main__":
     personal_id = choice(["elise", "ronan", "adele", "clara", "alain", "loris", "akyzo", "haros"]) + str(randint(1000, 9999))
     start = "!06!"
 
+    print(util.entette)
 
     secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
 
