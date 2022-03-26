@@ -45,7 +45,6 @@ WM          affiche les messages des workers
 """
 
 
-
 f = Fernet(key.key) 
 client = ClientCom()
 
