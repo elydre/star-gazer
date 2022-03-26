@@ -35,6 +35,7 @@ EXIT        quitte le programme
 FM          affiche l'historique des messages
 GO          lance le travail
 HELP        affiche cette aide
+INIT        reinitialise le programme
 LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
@@ -43,10 +44,7 @@ SW          stop tout les workers
 WM          affiche les messages des workers
 """
 
-worker_messages = []
-master_messages = []
-full_messages = []
-worker = []
+
 
 f = Fernet(key.key) 
 client = ClientCom()
@@ -64,6 +62,13 @@ def recv_msg(msg):
         full_messages.append((code, msg))
         if code % 2 == 1: worker_messages.append((code, msg))
         else: master_messages.append((code, msg))
+
+def init():
+    global worker, worker_messages, master_messages, full_messages
+    worker_messages = []
+    master_messages = []
+    full_messages = []
+    worker = []
 
 def go(inp):
     def push(start, end, step, quantite):
@@ -147,7 +152,6 @@ def get_cpu_count():
         total_cpu += int(temp[1])
     print(f"total cpu count : {total_cpu}")
 
-
 def shell():
     while True:
         inp = input("MASTER > ").split(" ")
@@ -176,6 +180,10 @@ def shell():
         elif cmd in ["ping", "get"]:
             ping(int(get_inp(inp, 1, 3)))
 
+        elif cmd in ["init", "r"]:
+            init()
+            print("les listes sont vide")
+
         elif cmd in ["lw", "w"]:
             print(f"{len(worker)} workers in list")
             print(", ".join(worker))
@@ -200,7 +208,7 @@ def shell():
         elif cmd != "":
             print("commande inconnue")
 
-
+init()
 while True:
     try: shell()
     except KeyboardInterrupt: print("ctrl+c")

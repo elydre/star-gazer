@@ -68,7 +68,7 @@ if __name__ == "__main__":
                 print(f"{personal_id} ends work, {s}")
                 secure_send(153, f"{personal_id}§{s}")
         elif code == 154:
-            print(msg.replace("%", "\n").replace("$", personal_id))
+            print(msg.replace("%", "\n").replace("$", personal_id).replace("#", "\n"*100))
         elif code == 156:
             print("STOP")
             global stop
