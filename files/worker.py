@@ -1,14 +1,14 @@
 import sys
 from multiprocessing import Pool
 from os import cpu_count, path
+from random import choice, randint
 from time import sleep
 
 from cryptography.fernet import Fernet
 
 import mod.key as key
 from mod.POOcom import ClientCom
-from worker.code import do, centre
-from random import randint, choice
+from worker.code import centre, do
 
 
 def code_centre(l):

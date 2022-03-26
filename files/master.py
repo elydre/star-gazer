@@ -1,10 +1,10 @@
+import os, sys
 from time import sleep, time
+
 from cryptography.fernet import Fernet
+
 import mod.key as key
 from mod.POOcom import ClientCom
-import os
-import sys
-
 
 start = "!06!"
 
