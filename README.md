@@ -12,6 +12,7 @@ LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
 PRINT       affiche un message chez les workers
+SW          stop tout les workers
 WM          affiche les messages des workers
 ```
 
@@ -25,6 +26,7 @@ WM          affiche les messages des workers
 | 151  | travail disponible        |
 | 153  | reponse du travail        |
 | 154  | demande de print          |
+| 156  | arrete des workers        |
 
 ### 150
 

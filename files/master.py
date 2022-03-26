@@ -19,6 +19,7 @@ LW          affiche la liste des workers
 MM          affiche les messages du master
 PING/GET    recupère la liste des workers
 PRINT       affiche un message chez les workers
+SW          stop tout les workers
 WM          affiche les messages des workers
 """
 
@@ -97,7 +98,7 @@ def wait_reply(attendu, code, string1, max_wait=10):
             print(f"{info[0]} {string1}")
             w.append(info[0])
             s.append(info[1])
-        if time() - debut > max_wait:
+        if time() - debut > max_wait and max_wait != -1:
             return s, w, round((time() - debut) * 1000)
     return s, 0, round((time() - debut) * 1000)
 
@@ -106,11 +107,11 @@ def go_reply(exit_code):
     
     s, x, t = wait_reply(exit_code, 151, "starts work")
     if x == 0: print(f"all workers started in {t}ms")
-    else: print(f"no reply from {find_diff(worker, x)} in {t}ms")
+    else: return print(f"no reply from {find_diff(worker, x)} in {t}ms")
 
-    s, x, t = wait_reply(exit_code, 153, "ends work")
-    if x == 0: print(f"all workers finished in {t}ms")
-    else: print(f"no reply from {find_diff(worker, x)} in {t}ms")
+    s, x, t = wait_reply(exit_code, 153, "ends work", -1)
+    print(f"all workers finished in {t}ms")
+        
 
     print(cros.main(s))
 
@@ -151,6 +152,9 @@ def shell():
             exit_code = go(inp)
             if exit_code > 0:
                 go_reply(exit_code)
+
+        elif cmd in ["stopw", "sw"]:
+            secure_send(156, "stop")
 
         elif cmd != "":
             print("commande inconnue")

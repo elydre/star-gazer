@@ -2,6 +2,7 @@ from multiprocessing import Pool
 from os import cpu_count
 from random import choice, randint
 from time import sleep
+import sys
 
 from cryptography.fernet import Fernet
 
@@ -39,12 +40,16 @@ if __name__ == "__main__":
                 gn = [int(e) for e in info[1].split(",")]
                 liste = util.generer_liste(*gn)
                 print(f"starts work, {len(liste)} elements in todo list")
-                secure_send(151, f"{personal_id}§{len(liste)}")
+                secure_send(151, f"{personal_id}")
                 s = go(info[2], liste)
                 print(f"{personal_id} ends work, {s}")
                 secure_send(153, f"{personal_id}§{s}")
         elif code == 154:
             print(msg.replace("%", "\n").replace("$", personal_id))
+        elif code == 156:
+            try: client.close()
+            except: pass
+            sys.exit(0)
 
 
     def go(func, todo):
