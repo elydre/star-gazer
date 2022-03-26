@@ -1,5 +1,5 @@
 from multiprocessing import Pool
-from os import cpu_count, path
+from os import cpu_count
 from random import choice, randint
 from time import sleep
 
@@ -8,7 +8,7 @@ from cryptography.fernet import Fernet
 import mod.key as key
 import mod.util as util
 from mod.POOcom import ClientCom
-from worker.code import centre, do
+from fworker.code import centre, do
 
 
 def code_centre(l):
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     f = Fernet(key.key) 
     client = ClientCom()
 
-    personal_id = choice(["elise", "ronan", "adele", "clara", "alain", "loris"]) + str(randint(1000, 9999))
+    personal_id = choice(["elise", "ronan", "adele", "clara", "alain", "loris", "akyzo", "haros"]) + str(randint(1000, 9999))
     start = "!06!"
 
 
@@ -33,16 +33,20 @@ if __name__ == "__main__":
             sleep(randint(1, 500)/1000)
             secure_send(101, personal_id)
             print("pong send")
+        elif code == 150:
+            info = msg.split("§")
+            if info[0] == personal_id:
+                gn = [int(e) for e in info[1].split(",")]
+                liste = util.generer_liste(*gn)
+                print(f"starts work, {len(liste)} elements in todo list")
+                secure_send(151, f"{personal_id}§{len(liste)}")
 
 
-    def go(func):
-        print(f"{func}")
+    def go(func, todo):
+        print(func)
 
-        util.write("worker/code.py", func.split("§")[0])
+        util.write("fworker/code.py", func.split("§")[0])
         print("ecrire DONE!")
-
-        todo = eval(func.split("§")[1])
-        print("todo DONE!")
 
         with Pool(cpu_count()) as p:
             sortie = (p.map(code_do, todo))
