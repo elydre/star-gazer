@@ -1,6 +1,18 @@
 # star-gazer
 pooling multi machine
 
+## commande master
+
+```
+CLEAR       clear screen
+EXIT        quitte le programme
+GO          lance le travail
+HELP        affiche cette aide
+LW          affiche la liste des workers
+MM          affiche les messages du master
+PING/GET    recupère la liste des workers
+WM          affiche les messages des workers
+```
 
 ## send code
 
