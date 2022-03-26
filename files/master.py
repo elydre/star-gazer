@@ -3,6 +3,8 @@ from cryptography.fernet import Fernet
 import mod.key as key
 from mod.POOcom import ClientCom
 import os
+import sys
+
 
 start = "!06!"
 
@@ -10,32 +12,20 @@ messages = []
 worker = []
 
 f = Fernet(key.key) 
-
 client = ClientCom()
 
+path_v = os.path.dirname(sys.argv[0])
 secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
+
+def read_pool():
+    with open(f'{path_v}/master/code.py' if sys.platform == "win32" else "master/code.py", "w") as f:
+        return f.read()
 
 @client.on_message
 def recv_msg(msg):
     if msg.startswith(start):
         new = f.decrypt(msg[len(start):].encode()).decode()
         messages.append([int(new.split("§")[0]), "§".join(new.split("§")[1:])])
-
-
-pool = """
-def do(n):
-    if n == 2:
-        return n
-    if n % 2 == 0:
-        return False
-    return next((False for i in range(3, int(n**0.5)+1, 2) if n % i == 0), n)
-
-def centre(l):
-    k = [e for e in l if e != False]
-    return len(k)
-"""
-
-#secure_send(f'{pool}§list(range(1, 10000000))')
 
 def shell():
     while True:
@@ -65,9 +55,8 @@ def shell():
             print("\n".join(worker))
         elif cmd == "clear":
             os.system("cls")
-        else:
+        elif cmd != "":
             print("commande inconnue")
-
 
 try:
     while True:

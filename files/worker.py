@@ -7,7 +7,7 @@ from cryptography.fernet import Fernet
 
 import mod.key as key
 from mod.POOcom import ClientCom
-from temp.code import do, centre
+from worker.code import do, centre
 from random import randint, choice
 
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     def go(func):
         print(f"{func}")
 
-        with open(f'{path_v}/temp/code.py' if sys.platform == "win32" else "temp/code.py", "w") as f:
+        with open(f'{path_v}/worker/code.py' if sys.platform == "win32" else "worker/code.py", "w") as f:
             f.write(func.split("§")[0])
         print("ecrire DONE!")
 
