@@ -66,8 +66,11 @@ if __name__ == "__main__":
     @client.on_message
     def recv_msg(msg):
         if msg.startswith(start):
-            new = f.decrypt(msg[len(start):].encode()).decode()
-            analyse(int(new.split("§")[0]), "§".join(new.split("§")[1:]))
+            try:
+                new = f.decrypt(msg[len(start):].encode()).decode()
+                analyse(int(new.split("§")[0]), "§".join(new.split("§")[1:]))
+            except:
+                print("decrypt error")
 
     try:
         print(f"worker DONE - {personal_id}")
