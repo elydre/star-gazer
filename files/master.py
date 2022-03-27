@@ -43,6 +43,7 @@ EXIT        quitte le programme
 GO          lance le travail
 HELP        affiche cette aide
 INIT        reinitialise le programme
+KEY         affiche la clef de cryptage
 LW          affiche la liste des workers
 MF          affiche l'historique des messages
 MM          affiche les messages du master
@@ -62,6 +63,7 @@ path = [
 [["go", "start", "run"],    lambda inp: start_go(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
 [["init", "r"],             lambda inp: init()],
+[["key"],                   lambda inp: print(util.loadkey().decode())],
 [["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
 [["mf"],                    lambda inp: print(msg_history(full_messages))],
 [["mm"],                    lambda inp: print(msg_history(master_messages))],

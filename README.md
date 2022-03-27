@@ -19,6 +19,7 @@ EXIT        quitte le programme
 GO          lance le travail
 HELP        affiche cette aide
 INIT        reinitialise le programme
+KEY         affiche la clef de cryptage
 LW          affiche la liste des workers
 MF          affiche l'historique des messages
 MM          affiche les messages du master
@@ -41,14 +42,16 @@ path = [
 [["go", "start", "run"],    lambda inp: start_go(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
 [["init", "r"],             lambda inp: init()],
-[["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list", "\n" ,", ".join(worker))],
+[["key"],                   lambda inp: print(util.loadkey().decode())],
+[["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
 [["mf"],                    lambda inp: print(msg_history(full_messages))],
 [["mm"],                    lambda inp: print(msg_history(master_messages))],
 [["mw"],                    lambda inp: print(msg_history(worker_messages))],
+[["perf", "%"],             lambda inp: code2w(158, get_inp(inp, 1, "*"), get_inp(inp, 2, 100))],
 [["ping", "get"],           lambda inp: ping(int(get_inp(inp, 1, 3)))],
-[["print"],                 lambda inp: secure_send(154, get_inp(inp, 1, "%master print"))],
+[["print"],                 lambda inp: code2w(154, get_inp(inp, 1, "*"), get_inp(inp, 2, "%master print"))],
 [["speed"],                 lambda inp: speed()],
-[["stopw", "sw"],           lambda inp: secure_send(156, "stop")],
+[["stopw", "sw"],           lambda inp: code2w(156, get_inp(inp, 1, "*"), "stop")],
 ]
 ```
 
