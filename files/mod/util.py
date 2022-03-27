@@ -48,6 +48,7 @@ def loadkey():
         print("key.txt not found, press enter to generate a new key or paste your own key")
         key = input("KEY > ")
         if key == "":
-            key = Fernet.generate_key()
-            write("mod/key.txt", key.decode())
-        return key.encode()
+            print("generating key...")
+            key = Fernet.generate_key().decode()
+            write("mod/key.txt", key)
+        return key
