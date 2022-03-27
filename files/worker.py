@@ -47,32 +47,29 @@ if __name__ == "__main__":
 
     print(util.entette)
 
-    def dual_send(code, msg):
-        secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
-        secure_send(code, msg)
-        secure_send(code, msg)
+    secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
 
     def analyse(code, msg):
         global cpu_usable
         if code == 100:
-            dual_send(101, personal_id)
+            secure_send(101, personal_id)
             print("pong send")
 
         info = msg.split("§")
         if info[0] == personal_id:
 
             if code == 102:
-                dual_send(103, f"{personal_id}§{personal_id}§{cpu_count()}§{cpu_usable}")
+                secure_send(103, f"{personal_id}§{personal_id}§{cpu_count()}§{cpu_usable}")
                 print(f"cpu send, nb cpu : {cpu_count()}, {cpu_usable}% usable")
 
             elif code == 150:
                 gn = [int(e) for e in info[1].split(",")]
                 liste = util.generer_liste(*gn)
                 print(f"starts work, {len(liste)} elements in todo list")
-                dual_send(151, f"{personal_id}")
+                secure_send(151, f"{personal_id}")
                 s = go(info[2], liste)
                 print(f"{personal_id} ends work, {s}")
-                dual_send(153, f"{personal_id}§{s}")
+                secure_send(153, f"{personal_id}§{s}")
 
             elif code == 154:
                 print("§".join(info[1:]).replace("%", "\n").replace("$", personal_id).replace("#", "\n"*100))
