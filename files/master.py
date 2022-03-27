@@ -48,6 +48,7 @@ LW          affiche la liste des workers
 MF          affiche l'historique des messages
 MM          affiche les messages du master
 MW          affiche les messages des workers
+PERF        modifie les ressources utilisable des workers
 PING/GET    recupère la liste des workers
 PRINT       affiche un message chez les workers
 SPEED       la latence master-msg-master
@@ -66,6 +67,7 @@ path = [
 [["mf"],                    lambda inp: print(msg_history(full_messages))],
 [["mm"],                    lambda inp: print(msg_history(master_messages))],
 [["mw"],                    lambda inp: print(msg_history(worker_messages))],
+[["perf", "%"],             lambda inp: code2w(158, get_inp(inp, 1, "*"), get_inp(inp, 2, 100))],
 [["ping", "get"],           lambda inp: ping(int(get_inp(inp, 1, 3)))],
 [["print"],                 lambda inp: code2w(154, get_inp(inp, 1, "*"), get_inp(inp, 2, "%master print"))],
 [["speed"],                 lambda inp: speed()],
@@ -171,8 +173,8 @@ def get_cpu_count():
     total_cpu = 0
     for e in s:
         temp = e.split("§")
-        print(f" {temp[0]} has {temp[1]} cores")
-        total_cpu += int(temp[1])
+        print(f" {temp[0]} has {temp[1]} cores, {temp[2]}% usable")
+        total_cpu += int(int(temp[1])*(int(temp[2])/100))
     print(f"total cpu count : {total_cpu}")
 
 def speed():
@@ -200,7 +202,7 @@ def code2w(code, wid, msg):
         print("syntax or index error")
 
 def shell():
-    inp = input("MASTER > ").split(" ")
+    inp = input("\nMASTER > ").split(" ")
     for p in path:
         if inp[0] in p[0]:
             p[1](inp)

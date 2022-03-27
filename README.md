@@ -64,7 +64,9 @@ path = [
 | 151  | reponse au 150            |
 | 153  | reponse du travail        |
 | 154  | demande de print          |
-| 156  | arrete des workers        |
+| 156  | arret des workers         |
+| 158  | edit % cpu usable         |
+
 
 ### 150
 
