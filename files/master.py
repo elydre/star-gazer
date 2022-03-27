@@ -86,7 +86,8 @@ def recv_msg(msg):
             if code % 2 == 1: worker_messages.append((code, msg))
             else: master_messages.append((code, msg))
         except:
-            print("decrypt error", msg)
+            full_messages.append(("-1", "decrypt error"))
+            print("decrypt error")
 
 def init():
     global worker, worker_messages, master_messages, full_messages
@@ -94,6 +95,7 @@ def init():
     master_messages = []
     full_messages = []
     worker = []
+    print("init DONE!")
 
 def ping(to_wait):
     secure_send(100, "ping")
@@ -104,8 +106,9 @@ def ping(to_wait):
         for m in worker_messages:
             if m[0] == 101:
                 worker_messages.remove(m)
-                worker.append(m[1])
-                print(f" {m[1]} is online {round((time() - d)*1000)}ms")
+                if m[1] not in worker:
+                    worker.append(m[1])
+                    print(f" {m[1]} is online {round((time() - d)*1000)}ms")
     print(f"ping DONE!, {len(worker)} workers online")
 
 def wait_reply(attendu, code, string1, max_wait=10):
@@ -119,9 +122,10 @@ def wait_reply(attendu, code, string1, max_wait=10):
                 continue
             worker_messages.remove(m)
             info = m[1].split("§")
-            print(f"{info[0]} {string1}")
-            w.append(info[0])
-            s.append("§".join(info[1:]))
+            if info[0] not in w:
+                print(f"{info[0]} {string1}")
+                w.append(info[0])
+                s.append("§".join(info[1:]))
         if time() - debut > max_wait and max_wait != -1:
             return s, w, round((time() - debut) * 1000)
     return s, 0, round((time() - debut) * 1000)
