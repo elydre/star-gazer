@@ -34,7 +34,8 @@ secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".e
 msg_history = lambda msg: "\n".join([":".join([str(f) for f in e]) for e in msg])
 
 start = "!06!"
-sleep_time = 0.05
+fonc_time = 0.05
+send_time = 0.2
 
 cmd_help = """
 CAT         affiche le contenu de pool.py
@@ -63,7 +64,7 @@ path = [
 [["exit", "quit", "q"],     lambda inp: quit()],
 [["go", "start", "run"],    lambda inp: start_go(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
-[["init", "r"],             lambda inp: init()],
+[["init", "r"],             lambda inp: init(print("init done"))],
 [["key"],                   lambda inp: print(util.loadkey().decode())],
 [["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
 [["mf"],                    lambda inp: print(msg_history(full_messages))],
@@ -89,20 +90,19 @@ def recv_msg(msg):
             full_messages.append(("-1", "decrypt error"))
             print("decrypt error")
 
-def init():
+def init(*args):
     global worker, worker_messages, master_messages, full_messages
     worker_messages = []
     master_messages = []
     full_messages = []
     worker = []
-    print("init DONE!")
 
 def ping(to_wait):
     secure_send(100, "ping")
     worker.clear()
     d = time()
     while to_wait > (time() - d):
-        sleep(sleep_time)
+        sleep(fonc_time)
         for m in worker_messages:
             if m[0] == 101:
                 worker_messages.remove(m)
@@ -116,7 +116,7 @@ def wait_reply(attendu, code, string1, max_wait=10):
     s = []
     debut = time()
     while len(w) < attendu:
-        sleep(sleep_time)
+        sleep(fonc_time)
         for m in worker_messages:
             if m[0] != code:
                 continue
@@ -137,7 +137,7 @@ def start_go(inp):
             for n in range(quantite):
                 secure_send(150, f"{worker[n]}§{start},{end},{step},{quantite},{n}§{pool}")
                 print(f"send to {worker[n]}")
-                sleep(sleep_time)
+                sleep(send_time)
 
         if len(inp) == 1:
             print("go <end>")
@@ -162,13 +162,15 @@ def start_go(inp):
         
         s, x, t = wait_reply(exit_code, 151, "starts work")
         if x == 0: print(f"all workers started in {t}ms")
-        else: return print(f"no reply from {find_diff(worker, x)} in {t}ms")
+        else:
+            worker_messages.clear()
+            return print(f"no reply from {find_diff(worker, x)} in {t}ms")
 
         s, x, t = wait_reply(exit_code, 153, "ends work", -1)
         print(f"all workers finished in {t}ms")
+        worker_messages.clear()
 
         print(cros.main(s))
-        worker_messages.clear()
 
     exit_code = go(inp)
     if exit_code > 0:
@@ -176,7 +178,7 @@ def start_go(inp):
 
 def get_cpu_count():
     for w in worker:
-        sleep(sleep_time)
+        sleep(send_time)
         secure_send(102, w)
     s, x, t = wait_reply(len(worker), 103, "reply")
     if x == 0: print(f"all workers replied in {t}ms")
@@ -208,7 +210,7 @@ def code2w(code, wid, msg):
     try:
         w = [worker[int(wid)]] if wid != "*" else worker
         for e in w:
-            sleep(sleep_time)
+            sleep(send_time)
             secure_send(int(code), f"{e}§{msg}")
             print(f" {code} send to {e}")
     except:
