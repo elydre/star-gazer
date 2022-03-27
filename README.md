@@ -21,6 +21,28 @@ SPEED       la latence master-msg-master
 SW          stop tout les workers
 ```
 
+## path
+
+```py
+path = [
+[["cat"],                   lambda inp: print(util.read("fmaster/pool.py"))],
+[["clear", "cls"],          lambda inp: os.system('cls' if os.name == 'nt' else 'clear')],
+[["cpu", "lscpu"],          lambda inp: get_cpu_count()],
+[["exit", "quit", "q"],     lambda inp: quit()],
+[["go", "start", "run"],    lambda inp: start_go(inp)],
+[["help", "?"],             lambda inp: print(cmd_help)],
+[["init", "r"],             lambda inp: init()],
+[["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list", "\n" ,", ".join(worker))],
+[["mf"],                    lambda inp: print(msg_history(full_messages))],
+[["mm"],                    lambda inp: print(msg_history(master_messages))],
+[["mw"],                    lambda inp: print(msg_history(worker_messages))],
+[["ping", "get"],           lambda inp: ping(int(get_inp(inp, 1, 3)))],
+[["print"],                 lambda inp: secure_send(154, get_inp(inp, 1, "%master print"))],
+[["speed"],                 lambda inp: speed()],
+[["stopw", "sw"],           lambda inp: secure_send(156, "stop")],
+]
+```
+
 ## send code
 
 | code | description               |
