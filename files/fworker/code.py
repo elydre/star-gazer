@@ -1,13 +1,16 @@
 # fonction pool
 def do(n):
-    if n == 2:
+    nombre_s = n - 2
+    mers_entree = ( 2 ** n ) - 1
+    s = 4
+    for _ in range(nombre_s):
+        s = ( ( s ** 2 ) - 2 ) % mers_entree
+    if s == 0:
+        print("2^", n, "-1 est premier")
         return n
-    if n % 2 == 0:
-        return False
-    return next((False for i in range(3, int(n**0.5)+1, 2) if n % i == 0), n)
+    return False
 
 # fonction de rasemblement dans worker
 def centre(l):
-    k = [e for e in l if e != False]
-    return len(k)
+    return [e for e in l if e != False]
 
