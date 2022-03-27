@@ -99,7 +99,7 @@ def ping(to_wait):
             if m[0] == 101:
                 worker_messages.remove(m)
                 worker.append(m[1])
-                print(f"{m[1]} is online {round((time() - d)*1000)}ms")
+                print(f" {m[1]} is online {round((time() - d)*1000)}ms")
     print(f"ping DONE!, {len(worker)} workers online")
 
 def wait_reply(attendu, code, string1, max_wait=10):
