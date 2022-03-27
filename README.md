@@ -68,5 +68,6 @@ path = [
 
 | alias | description |
 | ----- | ----------- |
-| %     | \n          |
+| %     | `"\n"`      |
 | $     | worker name |
+| #     | `"\n"*100`  |
