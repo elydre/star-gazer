@@ -1,3 +1,4 @@
+from cryptography.fernet import Fernet
 import os, sys
 
 entette = """
@@ -39,3 +40,12 @@ def generer_liste(start, end, step, quantite, n):
     if n == -1:
         return listes
     return listes[n]
+
+def loadkey():
+    try:
+        return read("mod/key.txt").encode()
+    except:
+        print("key.txt not found, generating one...")
+        key = Fernet.generate_key()
+        write("mod/key.txt", key.decode())
+        return key

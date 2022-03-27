@@ -20,13 +20,12 @@ from time import sleep, time
 
 from cryptography.fernet import Fernet
 
-import mod.key as key
 import mod.util as util
 import mod.cros as cros
 from mod.POOcom import ClientCom
 
 
-f = Fernet(key.key) 
+f = Fernet(util.loadkey())
 client = ClientCom()
 
 find_diff = lambda l1, l2: [e for e in l1 if e not in l2]

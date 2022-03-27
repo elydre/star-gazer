@@ -23,7 +23,6 @@ import sys
 
 from cryptography.fernet import Fernet
 
-import mod.key as key
 import mod.util as util
 from mod.POOcom import ClientCom
 from fworker.code import centre, do
@@ -38,7 +37,7 @@ def code_do(n):
 
 if __name__ == "__main__":
 
-    f = Fernet(key.key) 
+    f = Fernet(util.loadkey()) 
     client = ClientCom()
 
     global cpu_usable
