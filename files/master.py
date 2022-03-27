@@ -189,7 +189,6 @@ def quit():
     try: client.close()
     except: pass
     sys.exit(0)
-    
 
 def shell():
     inp = input("MASTER > ").split(" ")
