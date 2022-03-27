@@ -196,6 +196,7 @@ def code2w(code, wid, msg):
     try:
         w = [worker[int(wid)]] if wid != "*" else worker
         for e in w:
+            sleep(0.05)
             secure_send(int(code), f"{e}§{msg}")
             print(f" {code} send to {e}")
     except:
