@@ -199,7 +199,7 @@ def shell():
             break
     if inp != "in path" and inp[0] != "":
         print("command not found")
-            
+
 print(util.entette)
 init()
 while True:
