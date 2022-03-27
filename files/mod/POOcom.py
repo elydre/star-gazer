@@ -16,11 +16,12 @@
 import socket
 from _thread import start_new_thread
 
-version = "1.0.1"
+version = "1.1.2"
 
 def recv_msg(s, maped):
     while True:
-        maped(s.recv(1024).decode())
+        for e in s.recv(1024).decode().split("<end>")[:-1]:
+            maped(e)
 
 class ClientCom:
     def __init__(self, host = "pf4.ddns.net", port = 63535):
@@ -31,7 +32,7 @@ class ClientCom:
         start_new_thread(recv_msg, (self.s, func))
 
     def send(self, msg):
-        self.s.send(msg.encode())
+        self.s.send(f"{msg}<end>".encode())
 
     def close(self):
         self.s.close()
