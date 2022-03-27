@@ -29,7 +29,7 @@ SW          stop tout les workers
 | 101  | reponse au 100            |
 | 102  | get cpu count             |
 | 103  | reponse du 102            |
-| 104  | echo master-master        |
+| 104  | speed master-master       |
 | 150  | demande de travail        |
 | 151  | reponse au 150            |
 | 153  | reponse du travail        |

@@ -176,14 +176,14 @@ def get_cpu_count():
     print(f"total cpu count : {total_cpu}")
 
 def speed():
-    secure_send(104, "echo")
+    secure_send(104, "speed test")
     d = time()
     master_messages.clear()
     while True:
         sleep(0.001)
         for m in master_messages:
             if m[0] == 104:
-                return print(f"echo DONE!, {round((time() - d)*1000)}ms")
+                return print(f"DONE!, {round((time() - d)*1000)}ms")
 
 def quit():
     try: client.close()
@@ -192,15 +192,14 @@ def quit():
     
 
 def shell():
-    while True:
-        inp = input("MASTER > ").split(" ")
-        for p in path:
-            if inp[0] in p[0]:
-                p[1](inp)
-                inp = "in path"
-                break
-        if inp != "in path" and inp[0] != "":
-            print("command not found")
+    inp = input("MASTER > ").split(" ")
+    for p in path:
+        if inp[0] in p[0]:
+            p[1](inp)
+            inp = "in path"
+            break
+    if inp != "in path" and inp[0] != "":
+        print("command not found")
             
 print(util.entette)
 init()
