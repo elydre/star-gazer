@@ -50,5 +50,5 @@ def loadkey():
         if key == "":
             print("generating key...")
             key = Fernet.generate_key().decode()
-            write("mod/key.txt", key)
+        write("mod/key.txt", key)
         return key
