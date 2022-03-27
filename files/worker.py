@@ -50,13 +50,11 @@ if __name__ == "__main__":
     def dual_send(code, msg):
         secure_send = lambda code, msg: client.send(start + f.encrypt(f"{code}§{msg}".encode()).decode())
         secure_send(code, msg)
-        sleep(randint(100, 1000) / 1000)
         secure_send(code, msg)
 
     def analyse(code, msg):
         global cpu_usable
         if code == 100:
-            sleep(randint(1, 500)/1000)
             dual_send(101, personal_id)
             print("pong send")
 
@@ -64,7 +62,6 @@ if __name__ == "__main__":
         if info[0] == personal_id:
 
             if code == 102:
-                sleep(randint(1, 500)/1000)
                 dual_send(103, f"{personal_id}§{personal_id}§{cpu_count()}§{cpu_usable}")
                 print(f"cpu send, nb cpu : {cpu_count()}, {cpu_usable}% usable")
 

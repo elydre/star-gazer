@@ -35,7 +35,7 @@ msg_history = lambda msg: "\n".join([":".join([str(f) for f in e]) for e in msg]
 
 start = "!06!"
 fonc_time = 0.05
-send_time = 0.2
+send_time = 0.05
 
 cmd_help = """
 CAT         affiche le contenu de pool.py
