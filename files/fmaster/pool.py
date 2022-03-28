@@ -6,7 +6,7 @@ def do(n):
     for _ in range(nombre_s):
         s = ( ( s ** 2 ) - 2 ) % mers_entree
     if s == 0:
-        print("2^", n, "-1 est premier")
+        print(f"2^{n}-1 est premier")
         return n
     return False
 
