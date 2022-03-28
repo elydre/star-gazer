@@ -41,7 +41,7 @@ path = [
 [["exit", "quit", "q"],     lambda inp: quit()],
 [["go", "start", "run"],    lambda inp: start_go(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
-[["init", "r"],             lambda inp: init()],
+[["init", "r"],             lambda inp: init(print("init done"))],
 [["key"],                   lambda inp: print(util.loadkey().decode())],
 [["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
 [["mf"],                    lambda inp: print(msg_history(full_messages))],
