@@ -16,6 +16,7 @@
 '''
 
 from multiprocessing import Pool
+from _thread import start_new_thread
 from os import cpu_count
 from random import choice, randint
 from time import sleep
@@ -108,7 +109,7 @@ if __name__ == "__main__":
         if msg.startswith(start):
             try:
                 new = f.decrypt(msg[len(start):].encode()).decode()
-                analyse(int(new.split("§")[0]), "§".join(new.split("§")[1:]))
+                start_new_thread(analyse, (int(new.split("§")[0]), "§".join(new.split("§")[1:])))
             except:
                 print("decrypt error")
 
