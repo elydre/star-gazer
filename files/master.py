@@ -19,10 +19,12 @@ import os, sys
 from time import sleep, time
 
 from cryptography.fernet import Fernet
+from _thread import start_new_thread
 
 import mod.util as util
 import mod.cros as cros
 from mod.POOcom import ClientCom
+import mod.gui as gui
 
 
 f = Fernet(util.loadkey())
@@ -64,6 +66,7 @@ path = [
 [["exit", "quit", "q"],     lambda inp: quit()],
 [["go", "start", "run"],    lambda inp: start_go(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
+[["igo"],                   lambda inp: start_igo(inp)],
 [["init", "r"],             lambda inp: init(print("init done"))],
 [["key"],                   lambda inp: print(util.loadkey().decode())],
 [["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
@@ -111,7 +114,7 @@ def ping(to_wait):
                     print(f" {m[1]} is online {round((time() - d)*1000)}ms")
     print(f"ping DONE!, {len(worker)} workers online")
 
-def wait_reply(attendu, code, string1, max_wait=10):
+def wait_reply(attendu, code, string1, max_wait=10, special_worker=0):
     w = []
     s = []
     debut = time()
@@ -120,10 +123,13 @@ def wait_reply(attendu, code, string1, max_wait=10):
         for m in worker_messages:
             if m[0] != code:
                 continue
-            worker_messages.remove(m)
             info = m[1].split("§")
+            if special_worker != 0 and info[0] != special_worker:
+                continue
+            worker_messages.remove(m)
             if info[0] not in w:
-                print(f"{info[0]} {string1}")
+                if string1 != -1:
+                    print(f"{info[0]} {string1}")
                 w.append(info[0])
                 s.append("§".join(info[1:]))
         if time() - debut > max_wait and max_wait != -1:
@@ -175,6 +181,97 @@ def start_go(inp):
     exit_code = go(inp)
     if exit_code > 0:
         go_reply(exit_code)
+
+def start_igo(inp):                     # sourcery no-metrics
+    def igo(start, end, k, step):       # sourcery no-metrics
+        def w_reply(w):
+            s, x, t = wait_reply(1, 151, -1, 5, w)
+            wstat[w][0] = 2 if x == 0 else -1
+            if x != 0:
+                TD[wstat[w][1]][0] = 0
+                return
+            TD[wstat[w][1]][0] = 2
+            s, x, t = wait_reply(1, 153, -1, -1, w)
+            wstat[w][0], TD[wstat[w][1]][0] = 0, 3
+            sortie.append(s[0])
+
+        def printer():
+            GUI = gui.simple()
+            def print_all():
+                GUI.update("".join(str(e) for e in [
+                    " WORKERS:\n",
+                    sum(wstat[w][0] == 0 for w in worker),
+                    "workers idle\n",
+                    sum(wstat[w][0] == 1 for w in worker),
+                    "workers checking\n",
+                    sum(wstat[w][0] == 2 for w in worker),
+                    "workers working\n",
+                    sum(wstat[w][0] == -1 for w in worker),
+                    "workers dead\n",
+                    "\nLISTE:\n",
+                    sum(TD[x][0] == 0 for x in range(kq)),
+                    "liste en attente\n",
+                    sum(TD[x][0] == 1 for x in range(kq)),
+                    "liste en demarage\n",
+                    sum(TD[x][0] == 2 for x in range(kq)),
+                    "liste en cours\n",
+                    sum(TD[x][0] == 3 for x in range(kq)),
+                    "liste finis\n",
+                ]))
+                if sum(TD[x][0] == 3 for x in range(kq)) < kq:
+                    GUI.root.after(200, print_all)
+                else:
+                    GUI.close()
+            print_all()
+            GUI.run()
+
+        kq = k * len(worker) * ((end - start) // step) // 1000
+        print(f"{kq} jobs to do")
+        wstat = {e: [0, -1] for e in worker}
+        sortie = []
+        TD = [[0, start, end, step, kq, n] for n in range(kq)]
+        iTD = 0
+
+        start_new_thread(printer, ())
+
+        while sum(1 for x in range(kq) if TD[x][0] == 3) < kq:
+            for e in wstat:
+                if wstat[e][0] == 0:
+                    TD[iTD][0] = 1
+                    secure_send(150, f"{e}§{TD[iTD][1]},{TD[iTD][2]},{TD[iTD][3]},{TD[iTD][4]},{TD[iTD][5]}§" + util.read("fmaster/pool.py").split("#END#")[0])
+                    wstat[e][0] = 1
+                    wstat[e][1] = iTD
+                    start_new_thread(w_reply, (e,))
+                    iTD += 1
+                    if iTD == kq:
+                        iTD = 0
+                    sleep(send_time)
+        
+        print("FINISHED")
+        print(cros.main(sortie))
+
+    inp = ["igo"] + [int(e) for e in inp[1:]]
+
+    if len(inp) == 1:
+        print("go <end>")
+        print("go <end> <k>")
+        print("go <start> <end> <k>")
+        print("go <start> <end> <k> <step>")
+        print("go <start> <end> <k> <step>")
+        return -1
+    if len(inp) == 2:
+        igo(0, inp[1], 10, 10)
+    elif len(inp) == 3:
+        igo(0, inp[1], inp[2], 10)
+    elif len(inp) == 4:
+        igo(inp[1], inp[2], inp[3], 10)
+    elif len(inp) == 5:
+        igo(inp[1], inp[2], inp[3], inp[4])
+    elif len(inp) == 6:
+        igo(inp[1], inp[2], inp[3], inp[4])
+    else:
+        print("Syntax error")
+        return -1
 
 def get_cpu_count():
     for w in worker:

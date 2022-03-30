@@ -6,7 +6,7 @@ entette = """
 ,---.|--- ,---.,---.   ,---.,---.,---,,---.,---.
 `---.|    ,---||    ---|   |,---| .-' |---'|
 `---'`---'`---^`       `---|`---^'---'`---'`
-• mario                `---'
+• berlin               `---'
 """
 
 path_v = os.path.dirname(sys.argv[0])
@@ -15,6 +15,12 @@ def read(chemain):
     with open(f'{path_v}/{chemain}' if sys.platform == "win32" else chemain, "r") as fil:
         code = fil.read()
     return code
+
+def go_up():
+    sys.stdout.write("\033[F")
+
+def clear_line():
+    sys.stdout.write("\033[K")
 
 def write(chemain, code):
     with open(f'{path_v}/{chemain}' if sys.platform == "win32" else chemain, "w") as fil:
