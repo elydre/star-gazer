@@ -9,6 +9,10 @@ pooling multi machine
 • mario                `---'
 ```
 
+## disclamer
+
+~~yellow~~-star-gazer est un projet bienveillant, comme il~~s~~ ne doi~~ven~~t pas se rependre~~nt~~
+
 ## commande master
 
 ```
