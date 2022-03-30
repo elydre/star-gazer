@@ -224,6 +224,7 @@ def start_igo(inp):                     # sourcery no-metrics
 
         global STOP
         STOP = False
+        debut = time()
         kq = ceil(k * ((end - start) // step) / 1000)
         print(f"{kq} jobs to do")
         wstat = {e: [0, -1] for e in worker}
@@ -249,7 +250,7 @@ def start_igo(inp):                     # sourcery no-metrics
                 
             sleep(fonc_time)
         
-        print("FINISHED")
+        print(f"FINISHED in {round((time() - debut) * 1000)}ms")
         print(cros.main(sortie))
 
     inp = ["igo"] + [int(e) for e in inp[1:]]
