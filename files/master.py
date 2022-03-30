@@ -24,8 +24,6 @@ from _thread import start_new_thread
 import mod.util as util
 import mod.cros as cros
 from mod.POOcom import ClientCom
-import mod.gui as gui
-
 
 f = Fernet(util.loadkey())
 client = ClientCom()
@@ -94,7 +92,8 @@ def recv_msg(msg):
             print("decrypt error")
 
 def init(*args):
-    global worker, worker_messages, master_messages, full_messages
+    global worker, worker_messages, master_messages, full_messages, STOP
+    STOP = True
     worker_messages = []
     master_messages = []
     full_messages = []
@@ -195,10 +194,10 @@ def start_igo(inp):                     # sourcery no-metrics
             wstat[w][0], TD[wstat[w][1]][0] = 0, 3
             sortie.append(s[0])
 
+
         def printer():
-            GUI = gui.simple()
-            def print_all():
-                GUI.update("".join(str(e) for e in [
+            while sum(TD[x][0] == 3 for x in range(kq)) < kq or STOP:
+                print(
                     " WORKERS:\n",
                     sum(wstat[w][0] == 0 for w in worker),
                     "workers idle\n",
@@ -216,36 +215,38 @@ def start_igo(inp):                     # sourcery no-metrics
                     sum(TD[x][0] == 2 for x in range(kq)),
                     "liste en cours\n",
                     sum(TD[x][0] == 3 for x in range(kq)),
-                    "liste finis\n",
-                ]))
-                if sum(TD[x][0] == 3 for x in range(kq)) < kq:
-                    GUI.root.after(200, print_all)
-                else:
-                    GUI.close()
-            print_all()
-            GUI.run()
+                    "liste finis",
+                )
+                sleep(1)
+                [[util.go_up(), util.clear_line()] for _ in range(11)]
 
-        kq = k * len(worker) * ((end - start) // step) // 1000
+        global STOP
+        STOP = False
+        kq = k * ((end - start) // step) // 1000
         print(f"{kq} jobs to do")
         wstat = {e: [0, -1] for e in worker}
         sortie = []
         TD = [[0, start, end, step, kq, n] for n in range(kq)]
         iTD = 0
 
+
         start_new_thread(printer, ())
 
         while sum(1 for x in range(kq) if TD[x][0] == 3) < kq:
             for e in wstat:
-                if wstat[e][0] == 0:
-                    TD[iTD][0] = 1
-                    secure_send(150, f"{e}§{TD[iTD][1]},{TD[iTD][2]},{TD[iTD][3]},{TD[iTD][4]},{TD[iTD][5]}§" + util.read("fmaster/pool.py").split("#END#")[0])
-                    wstat[e][0] = 1
-                    wstat[e][1] = iTD
-                    start_new_thread(w_reply, (e,))
+                while wstat[e][0] == 0 and iTD < kq:
+                    if TD[iTD][0] == 0:
+                        TD[iTD][0] = 1
+                        secure_send(150, f"{e}§{TD[iTD][1]},{TD[iTD][2]},{TD[iTD][3]},{TD[iTD][4]},{TD[iTD][5]}§" + util.read("fmaster/pool.py").split("#END#")[0])
+                        wstat[e][0] = 1
+                        wstat[e][1] = iTD
+                        start_new_thread(w_reply, (e,))
                     iTD += 1
-                    if iTD == kq:
-                        iTD = 0
                     sleep(send_time)
+                if iTD == kq:
+                    iTD = 0
+                
+            sleep(fonc_time)
         
         print("FINISHED")
         print(cros.main(sortie))
@@ -327,4 +328,7 @@ print(util.entette)
 init()
 while True:
     try: shell()
-    except KeyboardInterrupt: print("ctrl+c")
+    except KeyboardInterrupt:
+        global STOP
+        STOP = True
+        print("ctrl+c")
