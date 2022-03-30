@@ -256,10 +256,10 @@ def start_igo(inp):                     # sourcery no-metrics
 
     if len(inp) == 1:
         print("go <end>")
-        print("go <end> <k>")
-        print("go <start> <end> <k>")
-        print("go <start> <end> <k> <step>")
-        print("go <start> <end> <k> <step>")
+        print("go <end> <nb list/10k>")
+        print("go <start> <end> <nb list/10k>")
+        print("go <start> <end> <nb list/10k> <step>")
+        print("go <start> <end> <nb list/10k> <step>")
         return -1
     if len(inp) == 2:
         igo(0, inp[1], 10, 10)
