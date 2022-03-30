@@ -16,13 +16,14 @@
 '''
 
 import os, sys
+from _thread import start_new_thread
+from math import ceil
 from time import sleep, time
 
 from cryptography.fernet import Fernet
-from _thread import start_new_thread
 
-import mod.util as util
 import mod.cros as cros
+import mod.util as util
 from mod.POOcom import ClientCom
 
 f = Fernet(util.loadkey())
@@ -44,6 +45,7 @@ CPU         get cpu count of all workers
 EXIT        quitte le programme
 GO          lance le travail
 HELP        affiche cette aide
+IGO         lance le travail 'intelligent'
 INIT        reinitialise le programme
 KEY         affiche la clef de cryptage
 LW          affiche la liste des workers
@@ -194,9 +196,10 @@ def start_igo(inp):                     # sourcery no-metrics
             wstat[w][0], TD[wstat[w][1]][0] = 0, 3
             sortie.append(s[0])
 
-
         def printer():
-            while sum(TD[x][0] == 3 for x in range(kq)) < kq or STOP:
+            print("\n"*10)
+            while sum(TD[x][0] == 3 for x in range(kq)) < kq and not STOP:
+                [[util.go_up(), util.clear_line()] for _ in range(11)]
                 print(
                     " WORKERS:\n",
                     sum(wstat[w][0] == 0 for w in worker),
@@ -218,17 +221,15 @@ def start_igo(inp):                     # sourcery no-metrics
                     "liste finis",
                 )
                 sleep(1)
-                [[util.go_up(), util.clear_line()] for _ in range(11)]
 
         global STOP
         STOP = False
-        kq = k * ((end - start) // step) // 1000
+        kq = ceil(k * ((end - start) // step) / 1000)
         print(f"{kq} jobs to do")
         wstat = {e: [0, -1] for e in worker}
         sortie = []
         TD = [[0, start, end, step, kq, n] for n in range(kq)]
         iTD = 0
-
 
         start_new_thread(printer, ())
 
