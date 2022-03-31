@@ -196,30 +196,34 @@ def start_igo(inp):                     # sourcery no-metrics
             wstat[w][0], TD[wstat[w][1]][0] = 0, 3
             sortie.append(s[0])
 
+        def print_stat():
+            print(
+                " WORKERS:\n",
+                sum(wstat[w][0] == 0 for w in worker),
+                "workers idle\n",
+                sum(wstat[w][0] == 1 for w in worker),
+                "workers checking\n",
+                sum(wstat[w][0] == 2 for w in worker),
+                "workers working\n",
+                sum(wstat[w][0] == -1 for w in worker),
+                "workers dead\n",
+                "\nLISTE:\n",
+                sum(TD[x][0] == 0 for x in range(kq)),
+                "liste en attente\n",
+                sum(TD[x][0] == 1 for x in range(kq)),
+                "liste en demarage\n",
+                sum(TD[x][0] == 2 for x in range(kq)),
+                "liste en cours\n",
+                sum(TD[x][0] == 3 for x in range(kq)),
+                "liste finis",
+            )
+
         def printer():
+
             print("\n"*10)
             while sum(TD[x][0] == 3 for x in range(kq)) < kq and not STOP:
                 [[util.go_up(), util.clear_line()] for _ in range(11)]
-                print(
-                    " WORKERS:\n",
-                    sum(wstat[w][0] == 0 for w in worker),
-                    "workers idle\n",
-                    sum(wstat[w][0] == 1 for w in worker),
-                    "workers checking\n",
-                    sum(wstat[w][0] == 2 for w in worker),
-                    "workers working\n",
-                    sum(wstat[w][0] == -1 for w in worker),
-                    "workers dead\n",
-                    "\nLISTE:\n",
-                    sum(TD[x][0] == 0 for x in range(kq)),
-                    "liste en attente\n",
-                    sum(TD[x][0] == 1 for x in range(kq)),
-                    "liste en demarage\n",
-                    sum(TD[x][0] == 2 for x in range(kq)),
-                    "liste en cours\n",
-                    sum(TD[x][0] == 3 for x in range(kq)),
-                    "liste finis",
-                )
+                print_stat()
                 sleep(1)
 
         global STOP
@@ -249,6 +253,9 @@ def start_igo(inp):                     # sourcery no-metrics
                     iTD = 0
                 
             sleep(fonc_time)
+
+        [[util.go_up(), util.clear_line()] for _ in range(11)]
+        print_stat()
         
         print(f"FINISHED in {round((time() - debut) * 1000)}ms")
         print(cros.main(sortie))
