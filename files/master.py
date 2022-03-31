@@ -36,7 +36,7 @@ msg_history = lambda msg: "\n".join([":".join([str(f) for f in e]) for e in msg]
 
 start = "!06!"
 fonc_time = 0.05
-send_time = 0.05
+send_time = 0.2
 
 cmd_help = """
 CAT         affiche le contenu de pool.py
@@ -64,9 +64,8 @@ path = [
 [["clear", "cls"],          lambda inp: os.system('cls' if os.name == 'nt' else 'clear')],
 [["cpu", "lscpu"],          lambda inp: get_cpu_count()],
 [["exit", "quit", "q"],     lambda inp: quit()],
-[["go", "start", "run"],    lambda inp: start_go(inp)],
+[["go", "igo"],             lambda inp: start_igo(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
-[["igo"],                   lambda inp: start_igo(inp)],
 [["init", "r"],             lambda inp: init(print("init done"))],
 [["key"],                   lambda inp: print(util.loadkey().decode())],
 [["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
@@ -137,52 +136,6 @@ def wait_reply(attendu, code, string1, max_wait=10, special_worker=0):
             return s, w, round((time() - debut) * 1000)
     return s, 0, round((time() - debut) * 1000)
 
-def start_go(inp):
-    def go(inp):
-        def push(start, end, step, quantite):
-            pool = util.read("fmaster/pool.py").split("#END#")[0]
-            for n in range(quantite):
-                secure_send(150, f"{worker[n]}§{start},{end},{step},{quantite},{n}§{pool}")
-                print(f"send to {worker[n]}")
-                sleep(send_time)
-
-        if len(inp) == 1:
-            print("go <end>")
-            print("go <start> <end>")
-            print("go <start> <end> <step>")
-            print("go <start> <end> <step> <quantite>")
-            return -1
-        if len(inp) == 2:
-            push(0, inp[1], 10, len(worker))
-        elif len(inp) == 3:
-            push(inp[1], inp[2], 10, len(worker))
-        elif len(inp) == 4:
-            push(inp[1], inp[2], inp[3], len(worker))
-        elif len(inp) == 5:
-            push(inp[1], inp[2], inp[3], inp[4])
-        else:
-            print("Syntax error")
-            return -1
-        return inp[4] if len(inp) > 4 else len(worker)
-
-    def go_reply(exit_code):
-        
-        s, x, t = wait_reply(exit_code, 151, "starts work")
-        if x == 0: print(f"all workers started in {t}ms")
-        else:
-            worker_messages.clear()
-            return print(f"no reply from {find_diff(worker, x)} in {t}ms")
-
-        s, x, t = wait_reply(exit_code, 153, "ends work", -1)
-        print(f"all workers finished in {t}ms")
-        worker_messages.clear()
-
-        print(cros.main(s))
-
-    exit_code = go(inp)
-    if exit_code > 0:
-        go_reply(exit_code)
-
 def start_igo(inp):                     # sourcery no-metrics
     def igo(start, end, k, step):       # sourcery no-metrics
         def w_reply(w):
@@ -230,6 +183,7 @@ def start_igo(inp):                     # sourcery no-metrics
         STOP = False
         debut = time()
         kq = ceil(k * ((end - start) // step) / 1000)
+        kq = len(worker) if kq < len(worker) else kq
         print(f"{kq} jobs to do")
         wstat = {e: [0, -1] for e in worker}
         sortie = []
@@ -275,9 +229,7 @@ def start_igo(inp):                     # sourcery no-metrics
         igo(0, inp[1], inp[2], 10)
     elif len(inp) == 4:
         igo(inp[1], inp[2], inp[3], 10)
-    elif len(inp) == 5:
-        igo(inp[1], inp[2], inp[3], inp[4])
-    elif len(inp) == 6:
+    elif len(inp) in [5, 6]:
         igo(inp[1], inp[2], inp[3], inp[4])
     else:
         print("Syntax error")
