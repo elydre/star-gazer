@@ -6,10 +6,12 @@ entette = """
 ,---.|--- ,---.,---.   ,---.,---.,---,,---.,---.
 `---.|    ,---||    ---|   |,---| .-' |---'|
 `---'`---'`---^`       `---|`---^'---'`---'`
-• berlin               `---'
+ hole                  `---'
 """
 
 path_v = os.path.dirname(sys.argv[0])
+
+clear = lambda: os.system("cls" if sys.platform == "win32" else "clear")
 
 def read(chemain):
     with open(f'{path_v}/{chemain}' if sys.platform == "win32" else chemain, "r") as fil:

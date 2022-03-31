@@ -6,7 +6,7 @@ pooling multi machine
 ,---.|--- ,---.,---.   ,---.,---.,---,,---.,---.
 `---.|    ,---||    ---|   |,---| .-' |---'|
 `---'`---'`---^`       `---|`---^'---'`---'`
-• berlin               `---'
+ hole                  `---'
 ```
 
 ## disclamer
@@ -41,21 +41,21 @@ SW          stop tout les workers
 path = [
 [["cat"],                   lambda inp: print(util.read("fmaster/pool.py"))],
 [["clear", "cls"],          lambda inp: os.system('cls' if os.name == 'nt' else 'clear')],
-[["cpu", "lscpu"],          lambda inp: get_cpu_count()],
+[["cpu", "lscpu"],          lambda inp: mc.get_cpu_count()],
 [["exit", "quit", "q"],     lambda inp: quit()],
-[["go", "start", "run"],    lambda inp: start_go(inp)],
+[["go", "igo"],             lambda inp: mc.start_igo(inp)],
 [["help", "?"],             lambda inp: print(cmd_help)],
-[["init", "r"],             lambda inp: init(print("init done"))],
+[["init", "r"],             lambda inp: mc.init(print("init done"))],
 [["key"],                   lambda inp: print(util.loadkey().decode())],
-[["lw", "w"],               lambda inp: print(f"{len(worker)} workers in list\n", "\n ".join([f"{worker.index(w)}. {w}" for w in worker]))],
-[["mf"],                    lambda inp: print(msg_history(full_messages))],
-[["mm"],                    lambda inp: print(msg_history(master_messages))],
-[["mw"],                    lambda inp: print(msg_history(worker_messages))],
-[["perf", "%"],             lambda inp: code2w(158, get_inp(inp, 1, "*"), get_inp(inp, 2, 100))],
-[["ping", "get"],           lambda inp: ping(int(get_inp(inp, 1, 3)))],
-[["print"],                 lambda inp: code2w(154, get_inp(inp, 1, "*"), get_inp(inp, 2, "%master print"))],
-[["speed"],                 lambda inp: speed()],
-[["stopw", "sw"],           lambda inp: code2w(156, get_inp(inp, 1, "*"), "stop")],
+[["lw", "w"],               lambda inp: print(f"{len(mc.worker)} workers:\n", "\n ".join([f"{mc.worker.index(w)}. {w}" for w in mc.worker]))],
+[["mf"],                    lambda inp: print(mc.msg_history(mc.full_messages))],
+[["mm"],                    lambda inp: print(mc.msg_history(mc.master_messages))],
+[["mw"],                    lambda inp: print(mc.msg_history(mc.worker_messages))],
+[["perf", "%"],             lambda inp: mc.code2w(158, mc.get_inp(inp, 1, "*"), mc.get_inp(inp, 2, 100))],
+[["ping", "get"],           lambda inp: mc.ping(int(mc.get_inp(inp, 1, 3)))],
+[["print"],                 lambda inp: mc.code2w(154, mc.get_inp(inp, 1, "*"), mc.get_inp(inp, 2, "%master print"))],
+[["speed"],                 lambda inp: mc.speed()],
+[["stopw", "sw"],           lambda inp: mc.code2w(156, mc.get_inp(inp, 1, "*"), "stop")],
 ]
 ```
 
