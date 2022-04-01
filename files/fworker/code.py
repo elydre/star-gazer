@@ -13,4 +13,3 @@ def do(n):
 # fonction de rasemblement dans worker
 def centre(l):
     return [e for e in l if e != False]
-
