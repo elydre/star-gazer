@@ -46,7 +46,7 @@ if __name__ == "__main__":
             code = fil.read()
         return code
 
-    KEY = read("/key.txt") if KEY != "" else KEY
+    KEY = read("/key.txt") if KEY == "" else KEY
     
     def generer_liste(start, end, step, quantite, n):
         listes = [[] for _ in range(quantite)]
