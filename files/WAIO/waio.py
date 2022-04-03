@@ -15,6 +15,14 @@
 --|~|--|~|--|~|--|~|--|~|--|~|--
 '''
 
+entette = """
+     |
+,---.|--- ,---.,---.   ,---.,---.,---,,---.,---.
+`---.|    ,---||    ---|   |,---| .-' |---'|
+`---'`---'`---^`       `---|`---^'---'`---'`
+ hole                  `---'
+"""
+
 import socket
 import sys
 import os
@@ -26,7 +34,6 @@ from time import sleep
 from cryptography.fernet import Fernet
 
 KEY = ""
-entette = "hole, WAIO version"
 stop = False
 
 def code_centre(arg):
