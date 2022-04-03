@@ -17,9 +17,9 @@
 
 import socket
 import sys
+import os
 from _thread import start_new_thread
 from multiprocessing import Pool
-from os import cpu_count
 from random import choice, randint
 from time import sleep
 
@@ -41,7 +41,13 @@ def code_do(arg):
 
 if __name__ == "__main__":
 
+    def read(chemain):
+        with open(f'{os.path.dirname(sys.argv[0])}/{chemain}' if sys.platform == "win32" else chemain, "r") as fil:
+            code = fil.read()
+        return code
 
+    KEY = read("/key.txt") if KEY != "" else KEY
+    
     def generer_liste(start, end, step, quantite, n):
         listes = [[] for _ in range(quantite)]
 
@@ -104,8 +110,8 @@ if __name__ == "__main__":
         if info[0] == personal_id:
 
             if code == 102:
-                secure_send(103, f"{personal_id}§{personal_id}§{cpu_count()}§{cpu_usable}")
-                print(f"cpu send, nb cpu : {cpu_count()}, {cpu_usable}% usable")
+                secure_send(103, f"{personal_id}§{personal_id}§{os.cpu_count()}§{cpu_usable}")
+                print(f"cpu send, nb cpu : {os.cpu_count()}, {cpu_usable}% usable")
 
             elif code == 150:
                 gn = [int(e) for e in info[1].split(",")]
@@ -138,7 +144,7 @@ if __name__ == "__main__":
         code = func.split("§")[0]
         print("ecrire DONE!")
 
-        with Pool(int(cpu_count()*(cpu_usable/100))) as p:
+        with Pool(int(os.cpu_count()*(cpu_usable/100))) as p:
             sortie = (p.map(code_do, [[t, code] for t in todo]))
         print("pool DONE!")
 
