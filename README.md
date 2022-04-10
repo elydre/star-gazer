@@ -31,7 +31,7 @@ MW          affiche les messages des workers
 PERF        modifie les ressources utilisable des workers
 PING/GET    recupère la liste des workers
 PRINT       affiche un message chez les workers
-SPEED       la latence master-msg-master
+SPEED       test la latence master-POOcom-master
 SW          stop tout les workers
 ```
 
