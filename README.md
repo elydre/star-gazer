@@ -9,9 +9,7 @@ pooling multi machine
  hole                  `---'
 ```
 
-## disclamer
-
-~~yellow~~-star-gazer est un projet bienveillant, comme il~~s~~ ne doi~~ven~~t pas se rependre~~nt~~
+# MASTER
 
 ## commande master
 
@@ -89,3 +87,17 @@ path = [
 | %     | `"\n"`      |
 | $     | worker name |
 | #     | `"\n"*100`  |
+
+# WORKER-DOCKER
+
+## create image
+
+```
+docker build -t star-gazer .
+```
+
+## execute
+
+```
+docker run --name w1 star-gazer
+```
