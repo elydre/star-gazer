@@ -66,9 +66,8 @@ def shell():
     for p in path:
         if inp[0] in p[0]:
             p[1](inp)
-            inp = "in path"
-            break
-    if inp != "in path" and inp[0] != "":
+            return
+    if inp[0] != "":
         print("command not found")
 
 print(util.entette)
