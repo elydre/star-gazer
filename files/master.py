@@ -64,8 +64,7 @@ path = [
 def shell():
     inp = input("\nMASTER > ").split(" ")
     for p in path:
-        if inp[0] in p[0]:
-            return p[1](inp)
+        if inp[0] in p[0]: return p[1](inp)
     if inp[0] != "":
         print("command not found")
 
