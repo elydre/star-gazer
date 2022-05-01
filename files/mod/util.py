@@ -52,7 +52,7 @@ def generer_liste(start, end, step, quantite, n):
 def loadkey():
     try:
         return read("mod/key.txt").encode()
-    except:
+    except Exception:
         print("key.txt not found, press enter to generate a new key or paste your own key")
         key = input("KEY > ")
         if key == "":
