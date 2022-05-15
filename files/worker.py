@@ -63,7 +63,7 @@ if __name__ == "__main__":
             elif code == 150:
                 gn = [int(e) for e in info[1].split(",")]
                 liste = util.generer_liste(*gn)
-                print(f"starts work, {len(liste)} elements in todo list")
+                print(f"starts work, {len(liste)} element.s in todo list")
                 secure_send(151, f"{personal_id}")
                 s = go(info[2], liste)
                 print(f"{personal_id} ends work, {s}")
