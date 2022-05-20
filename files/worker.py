@@ -102,7 +102,7 @@ if __name__ == "__main__":
         return s        
 
     @client.on_message
-    def recv_msg(msg):
+    def recv_msg(msg:str):
         if msg.startswith(start):
             try:
                 new = f.decrypt(msg[len(start):].encode()).decode()
