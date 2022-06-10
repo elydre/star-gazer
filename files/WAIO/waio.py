@@ -164,7 +164,7 @@ if __name__ == "__main__":
             try:
                 new = f.decrypt(msg[len(start):].encode()).decode()
                 start_new_thread(analyse, (int(new.split("§")[0]), "§".join(new.split("§")[1:])))
-            except:
+            except Exception:
                 print("decrypt error")
 
     try:

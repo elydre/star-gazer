@@ -39,7 +39,7 @@ def recv_msg(msg):
             full_messages.append((code, msg))
             if code % 2 == 1: worker_messages.append((code, msg))
             else: master_messages.append((code, msg))
-        except:
+        except Exception:
             full_messages.append(("-1", "decrypt error"))
             print("decrypt error")
 
@@ -142,28 +142,32 @@ def start_igo(inp):                     # sourcery no-metrics
         iTD = 0
 
         start_new_thread(printer, ())
-
-        while sum(1 for x in range(kq) if TD[x][0] == 3) < kq:
-            for e in wstat:
-                while wstat[e][0] == 0 and iTD < kq:
-                    if TD[iTD][0] == 0:
-                        TD[iTD][0] = 1
-                        secure_send(150, f"{e}§{TD[iTD][1]},{TD[iTD][2]},{TD[iTD][3]},{TD[iTD][4]},{TD[iTD][5]}§" + util.read("fmaster/pool.py").split("#END#")[0])
-                        wstat[e][0] = 1
-                        wstat[e][1] = iTD
-                        start_new_thread(w_reply, (e,))
-                    iTD += 1
-                    sleep(send_time)
-                if iTD == kq:
-                    iTD = 0
-                
-            sleep(fonc_time)
-
-        [[util.go_up(), util.clear_line()] for _ in range(11)]
-        print_stat()
         
-        print(f"FINISHED in {round((time() - debut) * 1000)}ms")
-        print(cros.main(sortie))
+        try:
+            while sum(1 for x in range(kq) if TD[x][0] == 3) < kq:
+                for e in wstat:
+                    while wstat[e][0] == 0 and iTD < kq:
+                        if TD[iTD][0] == 0:
+                            TD[iTD][0] = 1
+                            secure_send(150, f"{e}§{TD[iTD][1]},{TD[iTD][2]},{TD[iTD][3]},{TD[iTD][4]},{TD[iTD][5]}§" + util.read("fmaster/pool.py").split("#END#")[0])
+                            wstat[e][0] = 1
+                            wstat[e][1] = iTD
+                            start_new_thread(w_reply, (e,))
+                        iTD += 1
+                        sleep(send_time)
+                    if iTD == kq:
+                        iTD = 0
+                    
+                sleep(fonc_time)
+
+            [[util.go_up(), util.clear_line()] for _ in range(11)]
+            print_stat()
+            
+            print(f"FINISHED in {round((time() - debut) * 1000)}ms")
+            print(cros.main(sortie))
+        except KeyboardInterrupt:
+            STOP = True
+            print("^C - STOPPED")
 
     inp = ["igo"] + [int(e) for e in inp[1:]]
 
@@ -223,5 +227,5 @@ def code2w(code, wid, msg):
             sleep(send_time)
             secure_send(int(code), f"{e}§{msg}")
             print(f" {code} send to {e}")
-    except:
+    except Exception:
         print("syntax or index error")

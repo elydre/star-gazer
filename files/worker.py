@@ -88,7 +88,7 @@ if __name__ == "__main__":
     def go(func, todo):
         print(func)
 
-        util.write("fworker/code.py", func.split("§")[0])
+        util.write("fworker/code.py", func.split("§")[0][:-1])
         print("ecrire DONE!")
 
         with Pool(int(cpu_count()*(cpu_usable/100))) as p:
@@ -107,7 +107,7 @@ if __name__ == "__main__":
             try:
                 new = f.decrypt(msg[len(start):].encode()).decode()
                 start_new_thread(analyse, (int(new.split("§")[0]), "§".join(new.split("§")[1:])))
-            except:
+            except Exception:
                 print("decrypt error")
 
     try:
