@@ -1,3 +1,4 @@
+import contextlib
 import sys
 from _thread import start_new_thread
 from math import ceil
@@ -88,7 +89,7 @@ def wait_reply(attendu, code, string1, max_wait=10, special_worker=0):
     return s, 0, round((time() - debut) * 1000)
 
 def start_igo(inp):                     # sourcery no-metrics
-    def igo(start, end, k, step):       # sourcery no-metrics
+    def igo(start, end, k, step):
         def w_reply(w):
             s, x, t = wait_reply(1, 151, -1, 5, w)
             wstat[w][0] = 2 if x == 0 else -1
@@ -134,7 +135,7 @@ def start_igo(inp):                     # sourcery no-metrics
         STOP = False
         debut = time()
         kq = ceil(k * ((end - start) // step) / 1000)
-        kq = len(worker) if kq < len(worker) else kq
+        kq = max(kq, len(worker))
         print(f"{kq} jobs to do")
         wstat = {e: [0, -1] for e in worker}
         sortie = []
@@ -142,9 +143,9 @@ def start_igo(inp):                     # sourcery no-metrics
         iTD = 0
 
         start_new_thread(printer, ())
-        
+
         try:
-            while sum(1 for x in range(kq) if TD[x][0] == 3) < kq:
+            while sum(TD[x][0] == 3 for x in range(kq)) < kq:
                 for e in wstat:
                     while wstat[e][0] == 0 and iTD < kq:
                         if TD[iTD][0] == 0:
@@ -157,12 +158,12 @@ def start_igo(inp):                     # sourcery no-metrics
                         sleep(send_time)
                     if iTD == kq:
                         iTD = 0
-                    
+
                 sleep(fonc_time)
 
             [[util.go_up(), util.clear_line()] for _ in range(11)]
             print_stat()
-            
+
             print(f"FINISHED in {round((time() - debut) * 1000)}ms")
             print(cros.main(sortie))
         except KeyboardInterrupt:
@@ -184,7 +185,7 @@ def start_igo(inp):                     # sourcery no-metrics
         igo(0, inp[1], inp[2], 10)
     elif len(inp) == 4:
         igo(inp[1], inp[2], inp[3], 10)
-    elif len(inp) in [5, 6]:
+    elif len(inp) in {5, 6}:
         igo(inp[1], inp[2], inp[3], inp[4])
     else:
         print("Syntax error")
@@ -216,8 +217,8 @@ def speed():
                 return print(f"DONE!, {round((time() - d)*1000)}ms")
 
 def quit():
-    try: client.close()
-    except: pass
+    with contextlib.suppress(Exception):
+        client.close()
     sys.exit(0)
 
 def code2w(code, wid, msg):

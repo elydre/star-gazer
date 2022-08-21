@@ -1,0 +1,26 @@
+name: build img
+
+on:
+  push:
+    branches: [ "main" ]
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: install dependencies
+      run: sudo apt-get update && sudo apt-get install -y python3
+      
+    - name: get key
+      run: |
+        echo ${{ secrets.KEY }} > files/mod/key.txt
+
+    - name: start worker
+      run: |
+        cd files
+        python3 worker.py

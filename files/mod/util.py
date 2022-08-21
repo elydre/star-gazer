@@ -41,13 +41,11 @@ def generer_liste(start, end, step, quantite, n):
         if ii == step:
             istep += 1
             ii = 0
-        
+
         if istep == quantite:
             istep = 0
-        
-    if n == -1:
-        return listes
-    return listes[n]
+
+    return listes if n == -1 else listes[n]
 
 def loadkey():
     try:

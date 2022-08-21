@@ -12,6 +12,8 @@ ___________________________________
  - Licence : GNU GPL v3
 '''
 
+
+import contextlib
 entette = """
      |
 ,---.|--- ,---.,---.   ,---.,---.,---,,---.,---.
@@ -65,13 +67,11 @@ if __name__ == "__main__":
             if ii == step:
                 istep += 1
                 ii = 0
-            
+
             if istep == quantite:
                 istep = 0
-            
-        if n == -1:
-            return listes
-        return listes[n]
+
+        return listes if n == -1 else listes[n]
 
     def recv_msg(s, maped):
         while True:
@@ -109,14 +109,11 @@ if __name__ == "__main__":
         if code == 100:
             secure_send(101, personal_id)
             print("pong send")
-
         info = msg.split("§")
         if info[0] == personal_id:
-
             if code == 102:
                 secure_send(103, f"{personal_id}§{personal_id}§{os.cpu_count()}§{cpu_usable}")
                 print(f"cpu send, nb cpu : {os.cpu_count()}, {cpu_usable}% usable")
-
             elif code == 150:
                 gn = [int(e) for e in info[1].split(",")]
                 liste = generer_liste(*gn)
@@ -125,18 +122,16 @@ if __name__ == "__main__":
                 s = go(info[2], liste)
                 print(f"{personal_id} ends work, {s}")
                 secure_send(153, f"{personal_id}§{s}")
-
             elif code == 154:
-                print("§".join(info[1:]).replace("%", "\n").replace("$", personal_id).replace("#", "\n"*100))
+                print("§".join(info[1:]).replace("%", "\n").replace("$", personal_id).replace("#", "\n" * 100))
 
             elif code == 156:
                 print("STOP")
                 global stop
                 stop = True
-                try: client.close()
-                except: pass
+                with contextlib.suppress(Exception):
+                    client.close()
                 sys.exit(0)
-
             elif code == 158:
                 print(f"cpu usable set to {info[1]}%")
                 cpu_usable = int(info[1])
